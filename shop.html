@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-control" content="public">
+    <title>WIFI Store</title>
+
+    <link rel="stylesheet" href="resources/adminlte.min.css" type="text/css" />
+    <script src="resources/forced_browser.js"></script>
+    <script src="resources/jquery.min.js"></script>
+    <script src="resources/bootstrap.bundle.min.js"></script>
+    <script src="resources/adminlte.min.js"></script>
+    <script src="resources/alert.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --primary-light: #d1fae5;
+            --bg-color: #f3f4f6;
+            --text-main: #1f2937;
+            --text-sub: #6b7280;
+            --accent-yellow: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* --- CARD CONTAINER --- */
+        .store-card {
+            background: #fff;
+            width: 100%;
+            max-width: 950px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* --- LEFT SIDE (BRAND) --- */
+        .card-brand {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            width: 40%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            color: white;
+            overflow: hidden;
+        }
+
+        .circle-decor {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1;
+        }
+        .circle-1 { width: 250px; height: 250px; top: -80px; left: -80px; }
+        .circle-2 { width: 180px; height: 180px; bottom: -40px; right: -40px; }
+
+        .brand-content { z-index: 2; width: 100%; }
+
+        .logo-svg {
+            width: 85px; height: auto; fill: #ffffff;
+            margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .brand-title {
+            font-size: 2.2rem; font-weight: 900; margin-bottom: 5px;
+            letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .brand-subtitle {
+            font-size: 0.95rem; font-weight: 500; opacity: 0.95; margin-bottom: 35px;
+        }
+
+        .feature-list { text-align: left; margin-top: 10px; display: inline-block; }
+        
+        .feature-item {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+            font-size: 0.9rem; font-weight: 600; background: rgba(255, 255, 255, 0.15);
+            padding: 10px 18px; border-radius: 14px; backdrop-filter: blur(5px);
+            transition: transform 0.2s;
+        }
+        .feature-item:hover { transform: translateX(5px); background: rgba(255, 255, 255, 0.25); }
+        .feature-item i { font-size: 1rem; color: #ffffff; width: 20px; text-align: center; }
+
+        /* --- RIGHT SIDE (STORE FORM) --- */
+        .card-form {
+            width: 60%; padding: 45px; background: #fff;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .section-label {
+            font-size: 0.75rem; font-weight: 800; color: #9ca3af;
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 15px; display: block;
+        }
+
+        .product-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 15px; margin-bottom: 25px;
+        }
+
+        .product-option {
+            border: 2px solid #e5e7eb; border-radius: 18px; padding: 20px 5px;
+            text-align: center; cursor: pointer; transition: all 0.2s ease;
+            position: relative; background: #fff;
+        }
+        .product-option:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .product-option.active {
+            border-color: var(--primary); background-color: var(--primary-light);
+            color: var(--primary-dark); box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.2);
+            border-width: 2px;
+        }
+
+        .badge-best {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-yellow); color: #fff; font-size: 0.6rem;
+            font-weight: 800; padding: 4px 10px; border-radius: 20px;
+            white-space: nowrap; box-shadow: 0 4px 6px rgba(245, 158, 11, 0.3); z-index: 10;
+        }
+
+        .price { font-size: 1.35rem; font-weight: 800; color: var(--text-main); display: block; }
+        .duration { font-size: 0.75rem; font-weight: 600; color: var(--text-sub); margin-top: 4px; display: block; }
+
+        .input-wrapper { margin-bottom: 20px; }
+        
+        .custom-input {
+            width: 100%; padding: 18px; border: 2px solid #e5e7eb; border-radius: 16px;
+            font-size: 1.2rem; font-weight: 700; color: var(--text-main); text-align: center;
+            outline: none; transition: 0.2s; background: #f9fafb; letter-spacing: 1px;
+        }
+        .custom-input:focus {
+            border-color: var(--primary); background: #fff;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .summary-box {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f8fafc; padding: 15px 20px; border-radius: 14px;
+            border: 1px dashed #cbd5e1; margin-bottom: 20px;
+        }
+        .summary-label { font-size: 0.9rem; color: var(--text-sub); font-weight: 600; }
+        .summary-total { font-size: 1.1rem; color: var(--primary-dark); font-weight: 800; }
+
+        .payment-list {
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;
+        }
+
+        .btn-pay {
+            width: 100%; padding: 16px; border-radius: 14px; border: none;
+            font-weight: 700; font-size: 1rem; cursor: pointer; transition: transform 0.1s ease;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; overflow: hidden;
+        }
+        .btn-pay img { height: 24px; filter: brightness(0) invert(1); }
+        .btn-pay:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: 0 8px 15px -3px rgba(0,0,0,0.15); }
+        .btn-pay:active { transform: scale(0.98); }
+
+        .bg-gcash { background: linear-gradient(135deg, #007dfe, #0056b3); }
+        .bg-maya { background: linear-gradient(135deg, #27ae60, #1e8449); }
+        .bg-shopee { background: linear-gradient(135deg, #ee4d2d, #c0392b); }
+
+        .btn-qr {
+            width: 100%; padding: 14px; border-radius: 14px; border: 2px solid #e5e7eb;
+            background: #fff; color: var(--text-main); font-weight: 700; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-qr:hover { background: #f3f4f6; border-color: #d1d5db; }
+
+        .footer { margin-top: 25px; text-align: center; font-size: 0.75rem; color: #9ca3af; }
+        .footer a { color: var(--primary-dark); text-decoration: none; font-weight: 700; }
+
+        /* --- POPUP MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);
+            z-index: 999; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .modal-card {
+            background: white; width: 90%; max-width: 360px;
+            border-radius: 24px; padding: 25px; text-align: center;
+            transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-card { transform: translateY(0); }
+
+        .badge-new {
+            background: #dbeafe; color: #1e40af;
+            font-size: 0.7rem; font-weight: 800; padding: 5px 12px;
+            border-radius: 20px; display: inline-block; margin-bottom: 10px;
+        }
+
+        .payment-icons {
+            display: flex; justify-content: space-evenly; align-items: center;
+            gap: 15px; margin: 15px 0 20px 0; flex-wrap: wrap;
+        }
+        .payment-icons img { 
+            height: 28px; width: auto; object-fit: contain; transition: transform 0.2s;
+        }
+        
+        .rate-list {
+            margin: 0 auto 20px auto; text-align: left; background: #f9fafb;
+            border-radius: 12px; padding: 10px; border: 1px solid #e5e7eb;
+        }
+        .rate-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 10px; border-bottom: 1px dashed #e5e7eb; font-size: 0.9rem; color: #374151;
+        }
+        .rate-item:last-child { border-bottom: none; }
+        .rate-price { font-weight: 800; color: #059669; }
+        .rate-time { font-weight: 600; font-size: 0.85rem; color: #6b7280; }
+
+        .btn-modal {
+            width: 100%; padding: 14px; border-radius: 12px;
+            background: #111827; color: #fff; font-weight: 700; border: none; cursor: pointer;
+        }
+        .btn-modal:active { transform: scale(0.98); }
+
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .store-card { flex-direction: column; max-width: 450px; margin: 10px; }
+            .card-brand {
+                width: 100%; padding: 30px 20px;
+                flex-direction: row; justify-content: space-between;
+                text-align: left; align-items: center;
+            }
+            .feature-list, .circle-decor { display: none; }
+            .brand-content { display: flex; align-items: center; gap: 15px; }
+            .logo-svg { width: 50px; margin-bottom: 0; }
+            .brand-info { display: flex; flex-direction: column; }
+            .brand-title { font-size: 1.4rem; margin: 0; }
+            .brand-subtitle { font-size: 0.8rem; margin: 0; color: rgba(255,255,255,0.9); }
+            .card-form { width: 100%; padding: 30px 20px; }
+            .price { font-size: 1.1rem; }
+            .duration { font-size: 0.65rem; }
+            .product-grid { gap: 10px; }
+        }
+
+        #amountDropdown { display: none; }
+    </style>
+</head>
+<body class="portal">
+
+    <div id="promo-modal" class="modal-overlay">
+        <div class="modal-card">
+            <span class="badge-new">NEW RATES</span>
+            <h2 style="font-size:1.2rem; font-weight:800; color:#111827; margin-bottom:5px;">Easy Payments</h2>
+            <p style="font-size:0.8rem; color:#6b7280; margin-bottom: 15px;">Secure payment via e-wallets</p>
+            
+            <div class="payment-icons">
+                <img src="resources/gcash_logo.png" alt="GCash">
+                <img src="resources/maya_logo.png" alt="Maya">
+                <img src="resources/spay_logo.png" alt="Shopee">
+            </div>
+
+            <div class="rate-list">
+                <div class="rate-item">
+                    <span class="rate-time">24 Hours Unli</span>
+                    <span class="rate-price">&#8369;10.00</span>
+                </div>
+                <div class="rate-item">
+                    <span class="rate-time">3 Days Unli</span>
+                    <span class="rate-price">&#8369;28.00</span>
+                </div>
+                <div class="rate-item">
+                    <span class="rate-time">7 Days Unli</span>
+                    <span class="rate-price">&#8369;67.00</span>
+                </div>
+            </div>
+
+            <button class="btn-modal" onclick="closePromo()">Awesome, Got it!</button>
+        </div>
+    </div>
+
+    <div class="store-card">
+        
+        <div class="card-brand">
+            <div class="circle-decor circle-1"></div>
+            <div class="circle-decor circle-2"></div>
+
+            <div class="brand-content">
+                <svg viewBox='0 0 185 164' class="logo-svg">
+                    <g transform='translate(0,164) scale(0.05,-0.05)'>
+                        <path d='M1490 2838 c-587 -85 -1270 -468 -1320 -742 -27 -144 11 -202 387 -581 441 -445 515 -476 769 -325 346 207 800 211 1095 11 142 -96 270 -52 193 66 -185 282 -952 329 -1357 82 -165 -101 -195 -94 -369 74 -178 173 -177 149 -13 267 581 418 1362 442 1932 59 313 -211 437 -207 653 18 288 303 165 530 -456 841 -428 215 -1007 303 -1514 230 m904 -196 c320 -72 599 -196 862 -381 221 -156 231 -232 53 -400 -132 -125 -167 -127 -332 -14 -688 472 -1595 456 -2227 -37 l-140 -110 -135 138 c-214 218 -192 282 172 510 501 314 1163 425 1747 294z'/>
+                        <path d='M1733 1011 c-269 -96 -341 -457 -133 -666 184 -185 522 -137 638 91 175 347 -139 705 -505 575z m233 -158 c257 -109 164 -484 -111 -447 -229 31 -279 327 -74 437 82 44 101 45 185 10z'/>
+                    </g>
+                </svg>
+                
+                <h1 class="brand-title">Hotspot</h1>
+                <p class="brand-subtitle">Premium WiFi Access</p>
+
+                <div class="feature-list">
+                    <div class="feature-item"><i class="fas fa-bolt"></i> High Speed</div>
+                    <div class="feature-item"><i class="fas fa-gamepad"></i> Gaming Optimized</div>
+                    <div class="feature-item"><i class="fas fa-lock"></i> Secure Payment</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-form">
+            <form id="paymentForm" action="https://s2.klinternetservices.com/xendit/ewallet" method="GET">
+                <input type="hidden" id="method" name="method" value=""> 
+                <input type="hidden" id="tokenInput" name="token" value="GYc7emmbTWqE01hNlgmqS5CJx">
+                
+                <label class="section-label">Select Promo</label>
+                <div class="product-grid">
+                    <div class="product-option active" onclick="selectPromo('10', this)">
+                        <span class="price">&#8369;10</span>
+                        <span class="duration">24 Hrs</span>
+                    </div>
+                    <div class="product-option" onclick="selectPromo('28', this)">
+                        <span class="price">&#8369;28</span>
+                        <span class="duration">3 Days</span>
+                    </div>
+                    <div class="product-option" onclick="selectPromo('67', this)">
+                        <div class="badge-best">BEST VALUE</div>
+                        <span class="price">&#8369;67</span>
+                        <span class="duration">7 Days</span>
+                    </div>
+                </div>
+
+                <select id="amountDropdown" name="amount">
+                    <option value="10" selected>&#8369;10.00 - 24 Hours Unlimited</option>
+                    <option value="28">&#8369;28.00 - 3 Days Unlimited</option>
+                    <option value="67">&#8369;67.00 - 7 Days Unlimited</option>                
+                </select>
+
+                <div class="input-wrapper">
+                    <label class="section-label" for="numberInput">Mobile Number</label>
+                    <input type="tel" id="numberInput" class="custom-input" placeholder="09xxxxxxxxx" name="number" maxlength="11" autocomplete="tel" required>
+                </div>
+
+                <div class="summary-box">
+                    <span class="summary-label">Total Amount:</span>
+                    <span class="summary-total" id="totalDisplay">&#8369;10.00</span>
+                </div>
+
+                <label class="section-label">Pay With</label>
+                <div class="payment-list">
+                    <button type="submit" id="gcash" class="btn-pay bg-gcash" onclick="document.getElementById('method').value='gcash'">
+                        <img src="resources/gcash_logo.png" alt="GCash"> GCash
+                    </button>
+                    
+                    <button type="submit" id="maya" class="btn-pay bg-maya" onclick="document.getElementById('method').value='maya'">
+                        <img src="resources/maya_logo.png" alt="Maya"> Maya
+                    </button>
+                    
+                    <button type="submit" id="spay" class="btn-pay bg-shopee" onclick="document.getElementById('method').value='shopeepay'">
+                        <img src="resources/spay_logo.png" alt="Shopee"> ShopeePay
+                    </button>
+                </div>
+
+            </form>
+
+            <button id="generate_qr" class="btn-qr">
+                <i class="fas fa-qrcode"></i> Generate QR
+            </button>                
+            <div id="qrcode" style="display: none; margin: 20px auto;"></div>  
+
+            <div class="footer">
+                Omada Network | Openwrt | H153-381 <br>
+                <a href="https://s2.klinternetservices.com/client">No Account? Sign Up</a>
+            </div>
+        </div>
+
+    </div>   
+    
+    <script src="resources/index.js"></script>
+    <script src="resources/qr.js"></script>
+    <script src="resources/klcis.js"></script>
+
+    <script>
+        // MODAL LOGIC
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('promo-modal').classList.add('active');
+            }, 500);
+        };
+
+        function closePromo() {
+            document.getElementById('promo-modal').classList.remove('active');
+        }
+
+        // STORE LOGIC
+        function selectPromo(value, element) {
+            document.getElementById('amountDropdown').value = value;
+            document.querySelectorAll('.product-option').forEach(opt => opt.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Update Summary
+            document.getElementById('totalDisplay').innerHTML = '&#8369;' + value + '.00';
+        }
+    </script>
+
+</body>
+</html>
